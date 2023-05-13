@@ -114,3 +114,21 @@ app.put('/addround', async (req, res) => {
     }
 });
 
+//PUT Delete Label from labelList: (working)
+app.put('/deletelabel', async (req, res) => {
+    const { userEmail, label } = req.body;
+    try {
+        const user = await statsModel.findOne({ userEmail: userEmail });
+        const index = user.labelList.findIndex((labelObj) => labelObj.label === label);
+        if (index >= 0 && index < user.labelList.length) {
+            user.labelStats.splice(index, 1);
+            user.labelList.splice(index, 1);
+            user.save();
+            res.json("Label deleted successfully");
+        } else {
+            res.json("Error: Couldn't find label")
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
