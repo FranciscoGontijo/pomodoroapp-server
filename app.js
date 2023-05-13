@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 //Stats model use:
 const statsModel = require('./models/statsModel');
 
+//ALL REQUESTS FOR STATS MODEL:
 //POST Create new user when signing in: (working)
 app.post('/createnewuser', async (req, res) => {
     const userEmail = req.body.userEmail;
@@ -24,6 +25,39 @@ app.post('/createnewuser', async (req, res) => {
         const newUserStats = await statsModel.create(stats);
         res.json(newUserStats);
     } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+//GET user stats: (working)
+app.get('/userstats/:email', async (req, res) => {
+    const userEmail = req.params.email;
+    try {
+        const userStats = await statsModel.findOne({ userEmail: userEmail });
+        res.json(userStats);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+//GET user label list: (working)
+app.get('/labellist/:email', async (req, res) => {
+    const userEmail = req.params.email;
+    try {
+        const userStats = await statsModel.findOne({ userEmail: userEmail });
+        res.json(userStats.labelList);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
+
+//GET user label Stats: (working)
+app.get('/labelstats/:email', async (req, res) => {
+    const userEmail = req.params.email;
+    try {
+        const userStats = await statsModel.findOne({ userEmail: userEmail });
+        res.json(userStats.labelStats);
+    } catch (error) {
         res.status(500).send(err);
     }
 });
