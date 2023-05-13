@@ -8,6 +8,13 @@ require("dotenv").config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {
+    console.log("Server running on port 5000...");
+});
+
 //Stats model use:
 const statsModel = require('./models/statsModel');
 
@@ -74,8 +81,36 @@ app.put('/addlabel', async (req, res) => {
     }
 });
 
-const port = process.env.PORT || 5000;
-
-app.listen(port, () => {
-    console.log("Server running on port 5000...");
+//PUT add date and rounds (working)
+app.put('/addround', async (req, res) => {
+    const { userEmail, date, label, roundTime, weekDay } = req.body;
+    try {
+        const user = await statsModel.findOne({ userEmail: userEmail });
+        if (label !== 'ADD LABEL' && label !== 'SELECT LABEL') {
+            //ADD TO DATE STATS
+            const dateObj = user.dateStats.find(obj => obj.roundTime == roundTime && obj.date === date);
+            if (dateObj) {
+                dateObj.rounds += 1;
+            } else {
+                const newDateObj = { date: date, rounds: 1, roundTime: roundTime, weekDay: weekDay };
+                user.dateStats.push(newDateObj);
+            }
+            //ADD TO LABEL STATS
+            const labelStatsObj = user.labelStats.find(obj => obj.label === label);
+            const labelStatsDatesObj = labelStatsObj.dates.find(obj => obj.date === date && obj.roundTime == roundTime);
+            if (labelStatsDatesObj) {
+                labelStatsDatesObj.rounds += 1;
+            } else {
+                const newDateObj = { date: date, rounds: 1, roundTime: roundTime, weekDay: weekDay };
+                labelStatsObj.dates.push(newDateObj);
+            }
+            user.save();
+            res.json("Round added successfully");
+        } else {
+            res.json("Label not selected");
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
 });
+
