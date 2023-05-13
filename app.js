@@ -62,6 +62,17 @@ app.get('/labelstats/:email', async (req, res) => {
     }
 });
 
+//PUT Add label (working)
+app.put('/addlabel', async (req, res) => {
+    const { label, color, userEmail } = req.body;
+
+    try {
+        const userUpdated = await statsModel.updateOne({ userEmail: userEmail }, { $push: { labelList: { label: label, color: color }, labelStats: { label: label, color: color, dates: [] } } });
+        res.json(userUpdated);
+    } catch (err) {
+        res.status(500).send(err);
+    }
+});
 
 const port = process.env.PORT || 5000;
 
