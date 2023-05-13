@@ -8,6 +8,9 @@ require("dotenv").config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Stats model use:
+const statsModel = require('./models/statsModel');
+
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
