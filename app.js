@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: "https://pomodoroapp-nu.vercel.app/",
+        origin: "https://pomodoroapp-nu.vercel.app",
     })
 );
 
