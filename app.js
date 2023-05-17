@@ -2,11 +2,18 @@ const express = require('express');
 const app = express();
 const db = require('./connection');
 require("dotenv").config();
+const cors = require("cors");
 
 
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+    cors({
+        origin: "https://pomodoroapp-nu.vercel.app/",
+    })
+);
+
 
 
 const port = process.env.PORT || 5000;
